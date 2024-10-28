@@ -7,6 +7,6 @@ It works as of October 2024, and will install the CUDA 12.6 drivers.
 To run, simply execute the following:
 ```
 git clone https://github.com/randomscript7/privateGPT-WSL-GPU-setup
-cd privateGPT-WSL-GPU-setup
+cd PrivateGPT-GPU-setup
 sudo privateGPT-ollama.sh
 ```
