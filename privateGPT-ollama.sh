@@ -119,7 +119,7 @@ else
         source ~/.bashrc
         echo "Done."
 
-        skipped=false
+        skipped="false"
         
     elif [ "systemType" == "native" ]; then
     
@@ -141,11 +141,11 @@ else
         source ~/.bashrc
         echo "Done."
 
-        skipped=false
+        skipped="false"
         
     else
         echo "Skipped CUDA Toolkit installation."
-        skipped=true
+        skipped="true"
     fi
 
     if [ "skipped" == "false" ]; then
