@@ -9,9 +9,12 @@ if test ~/privateGPT/setupDone.txt; then
 
 else
 
-    echo "This script will, as of October 2024, install and set up PrivateGPT on WSL Ubuntu."
+    echo "This script will, as of October 2024, install and set up PrivateGPT on Ubuntu."
     echo "This script is NOT a fullly automatic setup script."
-    echo "You will need to install the Nvidia CUDA drivers, as this script is for (Nvidia) GPU power, not CPU."
+    echo "This script is configured for WSL and 24.xx Ubuntu, and is currently UNTESTED."
+    echo "This script is intended for GPU installation, but there is also a no-GPU option. Both are UNTESTED."
+    echo "If you wish to use GPU power and you have not installed the general Nvidia drivers, ctrl-c and do that before running this script."
+    echo "If you have the regular drivers installed or are installing for CPU mode only, you can continue as usual."
     read -p "Press enter to continue: " tmp
     echo "----------------"
     echo ""
@@ -43,7 +46,7 @@ else
     echo "----------------"
     echo ""
 
-    export PATH="/home/scriptmonkey/.pyenv/bin:$PATH"
+    export PATH="~/.pyenv/bin:$PATH"
 
     #Add to .bashrc file {
     echo " export PYENV_ROOT="$HOME/.pyenv" " >> .bashrc
@@ -76,7 +79,7 @@ else
     echo ""
 
     #Add to .bashrc file {
-    echo " export PATH="/home/scriptmonkey/.local/bin:$PATH" " >> .bashrc
+    echo " export PATH="~/.local/bin:$PATH" " >> .bashrc
     # }
 
     source /.bashrc
@@ -92,56 +95,100 @@ else
     # Install Nvidia drivers from https://developer.nvidia.com/cuda-downloads?target_os=Linux&target_arch=x86_64&Distribution=WSL-Ubuntu&target_version=2.0&target_type=deb_network
     #{
 
-    echo "Installing CUDA 12.6 drivers..."
-    echo "Replace the commands in this file with those found in the following link for updated drivers."
-    echo "https://developer.nvidia.com/cuda-downloads?target_os=Linux&target_arch=x86_64&Distribution=WSL-Ubuntu&target_version=2.0&target_type=deb_network"
-    #Driver instructions for 12.6 {
-    wget "https://developer.download.nvidia.com/compute/cuda/repos/wsl-ubuntu/x86_64/cuda-keyring_1.1-1_all.deb"
-    sudo dpkg -i cuda-keyring_1.1-1_all.deb
-    sudo apt-get update
-    sudo apt-get -y install cuda-toolkit-12-6
-    # }
-    echo "Done."
+    echo "The Nvidia CUDA Toolkit can be installed automatically, or skipped."
+    echo "Automatic installs currently supported are Ubuntu 24 and Ubuntu WSL."
+    read -p "Choose a distro, or skip (wsl/native/skip): " systemType
 
-    #Add to .bashrc file {
-    echo " export PATH="/usr/local/cuda-12.6/bin:$PATH" " >> ~.bashrc
-    echo " export LD_LIBRARY_PATH="/usr/local/cuda-12.6/lib64:$LD_LIBRARY_PATH" " >> ~.bashrc
-    # }
+    if [ "systemType" == "wsl" ]; then
+    
+        echo "Installing CUDA 12.6 drivers..."
+        echo "Replace the commands in this file with those found in the following link for updated drivers."
+        echo "https://developer.nvidia.com/cuda-downloads?target_os=Linux&target_arch=x86_64&Distribution=WSL-Ubuntu&target_version=2.0&target_type=deb_network"
+        #Driver instructions for 12.6 {
+        wget "https://developer.download.nvidia.com/compute/cuda/repos/wsl-ubuntu/x86_64/cuda-keyring_1.1-1_all.deb"
+        sudo dpkg -i cuda-keyring_1.1-1_all.deb
+        sudo apt-get update
+        sudo apt-get -y install cuda-toolkit-12-6
+        # }
 
-    source ~/.bashrc
+        #Add to .bashrc file {
+        echo " export PATH="/usr/local/cuda-12.6/bin:$PATH" " >> ~.bashrc
+        echo " export LD_LIBRARY_PATH="/usr/local/cuda-12.6/lib64:$LD_LIBRARY_PATH" " >> ~.bashrc
+        # }
 
-    echo "The GPU drivers have been installed."
-    echo "This script is currently incapable of troubleshooting if an error occurs."
-    echo "All this will do is allow you to manually check for errors."
-    read - p "Would you like to run <nvidia-smi.exe> and <nvcc --version> to check for errors? (y/n): " choice
+        source ~/.bashrc
+        echo "Done."
 
-    if [ "choice" = "y"]; then
-        echo "----------------"
-        echo "nvcc --version and nvidia-smi.exe will be run."
-        echo "If there are no errors, the setup will be successful."
-        nvcc --version
-        echo ""
-        echo "----------------"
-        echo "If there were errors, something went wrong."
-        read -p "If not, press Enter:" tmp
-        nvidia-smi.exe
-        echo ""
-        echo "----------------"
-        echo "If there were errors, something went wrong."
-        read -p "If not, press Enter:" tmp
+        skipped="false"
+        
+    elif [ "systemType" == "native" ]; then
+    
+        echo "Installing CUDA 12.6 drivers..."
+        echo "Replace the commands in this file with those found in the following link for updated drivers."
+        echo "https://developer.nvidia.com/cuda-downloads?target_os=Linux&target_arch=x86_64&Distribution=Ubuntu&target_version=24.04&target_type=deb_network"
+        #Driver instructions for 12.6 {
+        wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/cuda-keyring_1.1-1_all.deb
+        sudo dpkg -i cuda-keyring_1.1-1_all.deb
+        sudo apt-get update
+        sudo apt-get -y install cuda-toolkit-12-6
+        # }
 
+        # Add to .bashrc file {
+        echo " export PATH="/usr/local/cuda-12.6/bin:$PATH" " >> ~.bashrc
+        echo " export LD_LIBRARY_PATH="/usr/local/cuda-12.6/lib64:$LD_LIBRARY_PATH" " >> ~.bashrc
+        # }
+
+        source ~/.bashrc
+        echo "Done."
+
+        skipped="false"
+        
     else
-        echo "Skipping verification..."
-        sleep 0.5
+        echo "Skipped CUDA Toolkit installation."
+        skipped="true"
     fi
 
-    echo ""
-    echo "----------------"
-    echo "Installing llama-cpp-python via poetry..."
-    CMAKE_ARGS='-DGGML_CUDA=on' poetry run pip install --force-reinstall --no-cache-dir llama-cpp-python
+    if [ "skipped" == "false" ]; then
+        echo "The Nvidia CUDA Toolkit has been installed."
+        echo "This script is currently incapable of troubleshooting if an error occurs."
+        echo "All this will do is allow you to manually check for errors."
+        read - p "Would you like to run <nvidia-smi.exe> and <nvcc --version> to check for errors? (y/n): " choice
+
+        if [ "choice" = "y"]; then
+            echo "----------------"
+            echo "nvcc --version and nvidia-smi.exe will be run."
+            echo "If there are no errors, the setup will be successful."
+            nvcc --version
+            echo ""
+            echo "----------------"
+            echo "If there were errors, something went wrong."
+            read -p "If not, press Enter:" tmp
+            nvidia-smi.exe
+            echo ""
+            echo "----------------"
+            echo "If there were errors, something went wrong."
+            read -p "If not, press Enter:" tmp
+
+        else
+            echo "Skipping verification..."
+            sleep 0.5
+        fi
+
+        echo ""
+        echo "----------------"
+        echo "Installing llama-cpp-python via poetry..."
+        CMAKE_ARGS='-DGGML_CUDA=on' poetry run pip install --force-reinstall --no-cache-dir llama-cpp-python
+        
+    else 
+
+        echo ""
+        echo "----------------"
+        echo "Installing llama-cpp-python via poetry..."
+        CMAKE_ARGS='-DGGML_CUDA=off' poetry run pip install --force-reinstall --no-cache-dir llama-cpp-python
+    
+    fi
 
     poetry run python scripts/setup
-
     read -p "Setup has completed. To start privateGPT, press Enter: " tmp
     echo "Starting privateGPT on 127.0.0.1:8001..."
     sleep 2
@@ -149,11 +196,11 @@ else
     echo "This file means that llama has been set up on privateGPT. You may disregard it." > ~/privateGPT/setupDone.txt
 
     make run
+    # If GPU offload was installed & is working, you should see blas = 1
 
-    # If GPU offload is working, you should see blas = 1
-
-    #PrivateGPT will be running on 127.0.0.1:8001, using a Nvidia GPU for computation power
+    #PrivateGPT will be running on 127.0.0.1:8001, using a Nvidia GPU for computation power if CUDA was installed
     #This script was made after updating commands from this guide: medium.com/installing-privategpt-on-wsl-with-gpu-support-5798d763aa31
+    #Note: This script is UNTESTED. Sucess is not guarenteed, especially for a non-CUDA installation
 
 fi
 
