@@ -7,6 +7,7 @@ It is functional as of October 2024, and will install the CUDA 12.6 drivers if G
 To run, simply execute the following:
 ```
 git clone https://github.com/randomscript7/privateGPT-setup
-sudo chmod +x ~/PrivateGPT-setup/privateGPT-ollama.sh
-sudo ./PrivateGPT-setup/privateGPT-ollama.sh
+cd PrivateGPT-setup
+sudo chmod +x privateGPT-ollama.sh
+sudo ./privateGPT-ollama.sh
 ```
