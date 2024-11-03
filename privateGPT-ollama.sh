@@ -8,7 +8,9 @@ if test ~/privateGPT/setupDone.txt; then
     make run ~/privateGPT/pyproject.toml
 
 else
-
+    
+    cd ~
+    
     echo "This script will, as of October 2024, install and set up PrivateGPT on Ubuntu."
     echo "This script is NOT a fullly automatic setup script."
     echo "This script is configured for WSL and 24.xx Ubuntu, and is currently UNTESTED."
