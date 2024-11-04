@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if test ~/privateGPT/setupDone.txt; then
+if test -f ~/privateGPT/setupDone.txt; then
     
     echo "PrivateGPT appears to have been already set up."
     echo "Starting existing program instead..."
@@ -50,13 +50,19 @@ else
 
     export PATH="~/.pyenv/bin:$PATH"
 
-    #Add to .bashrc file {
-    echo " export PYENV_ROOT="$HOME/.pyenv" " >> .bashrc
-    echo " [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH" " >> .bashrc
-    echo " eval "$(pyenv init -)" " >> .bashrc
+    #Add to ~/.bashrc file {
+    echo "---------------"
+    echo "privateGPT commands start here"
+    echo "---------------"
+    echo " export PYENV_ROOT="$HOME/.pyenv" " >> ~/.bashrc
+    echo "" >> ~/.bashrc
+    echo " [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH" " >> ~/.bashrc
+    echo "" >> ~/.bashrc
+    echo " eval "$(pyenv init -)" " >> ~/.bashrc
+    echo "" >> ~/.bashrc
     # }
 
-    source .bashrc
+    source ~/.bashrc
 
     echo "Setting up lzma..."
     sudo apt-get install lzma
@@ -80,11 +86,12 @@ else
     echo "----------------"
     echo ""
 
-    #Add to .bashrc file {
-    echo " export PATH="~/.local/bin:$PATH" " >> .bashrc
+    #Add to ~/.bashrc file {
+    echo " export PATH="~/.local/bin:$PATH" " >> ~/.bashrc
+    echo "" >> ~/.bashrc
     # }
 
-    source /.bashrc
+    source /~/.bashrc
 
     # poetry --version # should display something without errors
 
@@ -101,7 +108,7 @@ else
     echo "Automatic installs currently supported are Ubuntu 24 and Ubuntu WSL."
     read -p "Choose a distro, or skip (wsl/native/skip): " systemType
 
-    if [ "systemType" == "wsl" ]; then
+    if [ "$systemType" == "wsl" ]; then
     
         echo "Installing CUDA 12.6 drivers..."
         echo "Replace the commands in this file with those found in the following link for updated drivers."
@@ -113,9 +120,11 @@ else
         sudo apt-get -y install cuda-toolkit-12-6
         # }
 
-        #Add to .bashrc file {
-        echo " export PATH="/usr/local/cuda-12.6/bin:$PATH" " >> ~.bashrc
-        echo " export LD_LIBRARY_PATH="/usr/local/cuda-12.6/lib64:$LD_LIBRARY_PATH" " >> ~.bashrc
+        #Add to ~/.bashrc file {
+        echo " export PATH="/usr/local/cuda-12.6/bin:$PATH" " >> ~/.bashrc
+        echo "" >> ~/.bashrc
+        echo " export LD_LIBRARY_PATH="/usr/local/cuda-12.6/lib64:$LD_LIBRARY_PATH" " >> ~/.bashrc
+        echo "" >> ~/.bashrc
         # }
 
         source ~/.bashrc
@@ -123,7 +132,7 @@ else
 
         skipped="false"
         
-    elif [ "systemType" == "native" ]; then
+    elif [ "$systemType" == "native" ]; then
     
         echo "Installing CUDA 12.6 drivers..."
         echo "Replace the commands in this file with those found in the following link for updated drivers."
@@ -135,9 +144,11 @@ else
         sudo apt-get -y install cuda-toolkit-12-6
         # }
 
-        # Add to .bashrc file {
-        echo " export PATH="/usr/local/cuda-12.6/bin:$PATH" " >> ~.bashrc
-        echo " export LD_LIBRARY_PATH="/usr/local/cuda-12.6/lib64:$LD_LIBRARY_PATH" " >> ~.bashrc
+        # Add to ~/.bashrc file {
+        echo "" >> ~/.bashrc
+        echo " export PATH="/usr/local/cuda-12.6/bin:$PATH" " >> ~/.bashrc
+        echo "" >> ~/.bashrc
+        echo " export LD_LIBRARY_PATH="/usr/local/cuda-12.6/lib64:$LD_LIBRARY_PATH" " >> ~/.bashrc
         # }
 
         source ~/.bashrc
@@ -150,13 +161,13 @@ else
         skipped="true"
     fi
 
-    if [ "skipped" == "false" ]; then
+    if [ "$skipped" == "false" ]; then
         echo "The Nvidia CUDA Toolkit has been installed."
         echo "This script is currently incapable of troubleshooting if an error occurs."
         echo "All this will do is allow you to manually check for errors."
         read - p "Would you like to run <nvidia-smi.exe> and <nvcc --version> to check for errors? (y/n): " choice
 
-        if [ "choice" = "y"]; then
+        if [ "$choice" = "y"]; then
             echo "----------------"
             echo "nvcc --version and nvidia-smi.exe will be run."
             echo "If there are no errors, the setup will be successful."
