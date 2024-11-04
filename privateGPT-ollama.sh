@@ -3,8 +3,9 @@
 if test -f ~/privateGPT/setupDone.txt; then
     
     echo "PrivateGPT appears to have been already set up."
-    echo "Starting existing program instead..."
+    echo "Starting existing program on 127.0.0.1:8001 instead..."
     sleep 0.5
+    poetry run scripts/setup
     make run ~/privateGPT/pyproject.toml
 
 else
