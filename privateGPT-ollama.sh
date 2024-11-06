@@ -175,7 +175,7 @@ else
         echo "All this will do is allow you to manually check for errors."
         read - p "Would you like to run <nvidia-smi.exe> and <nvcc --version> to check for errors? (y/n): " choice
 
-        if [ "$choice" = "y"]; then
+        if [ "$choice" == "y"]; then
             echo "----------------"
             echo "nvcc --version and nvidia-smi.exe will be run."
             echo "If there are no errors, the setup will be successful."
